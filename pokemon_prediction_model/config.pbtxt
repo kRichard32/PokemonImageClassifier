@@ -1,0 +1,19 @@
+# name: "pokemonmodel"
+# platform: "pytorch_libtorch"
+name: "pokemon_prediction_model"
+default_model_filename: "pokemon_model.onnx"
+# backend: "python"
+backend: "openvino"
+#platform: "pytorch_libtorch"
+
+# input {
+#   name: "input"
+#   data_type: TYPE_FP32
+#   dims: [ 3, -1, -1 ]
+# }
+
+# output {
+#   name: "output"
+#   data_type: TYPE_STRING
+#   dims: [ 1 ]
+# }
