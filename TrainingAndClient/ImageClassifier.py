@@ -12,6 +12,8 @@ import torch.nn.functional as F
 import tqdm
 import json
 
+
+
 global_label_set = []
 class PokemonDataset(Dataset):
     def __init__(self, data, transform=None):
@@ -248,7 +250,7 @@ def load_model(model_path, model_metadata):
     print("Model loaded")
     return pokemon_classifier
 
-def run_inference_on_image(image):
+def run_inference_on_image(image, create_onnx):
     script_path = os.path.dirname(os.path.abspath(__file__))
     abs_model = os.path.join(script_path, "pokemon_model.pth")
 
@@ -257,6 +259,10 @@ def run_inference_on_image(image):
 
     img_tensor =  transforms.Resize((220, 220))(image)
     img_tensor = img_tensor.unsqueeze(0)
+
+    if create_onnx:
+        onnx_program = torch.onnx.export(model, img_tensor, dynamo=True)
+        onnx_program.optimize()
 
     tensor = model(img_tensor)
     max_element = tensor.argmax().tolist()
@@ -276,7 +282,7 @@ if __name__ == "__main__":
     file = Path(abs_file_path_model)
     if file.is_file():
         img = Image.open(os.path.join(script_path, "ab2.png")).convert('RGB')
-        index = run_inference_on_image(transforms.ToTensor()(img))
+        index = run_inference_on_image(transforms.ToTensor()(img), False)
         print(get_pokemon_label(index))
     else:
         run_models()
