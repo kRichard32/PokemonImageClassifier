@@ -3,7 +3,8 @@
 name: "pokemon_prediction_model"
 default_model_filename: "pokemon_model.onnx"
 # backend: "python"
-backend: "openvino"
+#backend: "openvino"
+backend: "onnxruntime"
 #platform: "pytorch_libtorch"
 
 # input {

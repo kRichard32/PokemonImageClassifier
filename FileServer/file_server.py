@@ -32,7 +32,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     @cached_property
     def cookies(self):
         return SimpleCookie(self.headers.get("Cookie"))
-
+    def _send_cors_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
     # def get_response(self):
     #     return json.dumps(
     #         {
@@ -63,9 +64,10 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         image_path = "file_storage/" + data_path
         answer = OnnxClient.run_classification(image_path=image_path)
         self.send_response(200)
+        self._send_cors_headers()
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self.wfile.write(answer.encode('ascii'))
+        self.wfile.write(f'{{"id": "{answer}"}}'.encode('ascii'))
     def do_GET(self):
         if self.path.startswith("/classify"):
             self.classify()
@@ -96,16 +98,18 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             self.send_header("Content-Type", "application/json")
             self.end_headers()
             self.wfile.write(answer.encode("utf-8"))
-            return
+            return answer
         new_path = self.get_available_path(filename)
         file = open(f'{os.path.dirname(os.path.realpath(__file__))}/file_storage/{new_path}', 'wb')
         file.write(file_bytes)
         file.close()
 
         self.send_response(200)
+        self._send_cors_headers()
         self.send_header("Content-Type", "application/json")
         self.end_headers()
-        self.wfile.write(new_path.encode("utf-8"))
+        self.wfile.write(f'{{"Success": "{new_path}"}}'.encode("utf-8"))
+        return "stuff"
     def get_available_path(self, filename):
         stem, suffix = filename.split(".")
         suffix = "." + suffix
@@ -118,8 +122,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     print("Starting Server")
-    server = HTTPServer(("0.0.0.0", 8000), WebRequestHandler)
+    server = HTTPServer(("0.0.0.0", 8080), WebRequestHandler)
     server.serve_forever()
-    # curl http://localhost:8000/v2/health/ready
+    # curl http://localhost:8080/v2/health/ready
     # docker run --gpus=1 --rm -p8003:8000 -p8004:8001 -p8005:8002 -v ${PWD}:/models nvcr.io/nvidia/tritonserver:25.01-py3 tritonserver --model-repository=/models --model-control-mode explicit --load-model pokemon_prediction_model
     # docker run --gpus=1 --rm -p8003:8000 -p8004:8001 -p8005:8002 -v ${PWD}/../ImageClassifier:/models nvcr.io/nvidia/tritonserver:25.01-py3 tritonserver --model-repository=/models --model-control-mode explicit --load-model pokemon_prediction_model
