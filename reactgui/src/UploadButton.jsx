@@ -6,7 +6,9 @@ export function ClassificiationText({classification}){
     if (classification != null){
         return (
             <>
-            {classification}
+            <h1 className="fg vert_center">
+                        Predicted: {classification}
+                    </h1>
             </>
         )
     } else {
@@ -73,7 +75,7 @@ export function SubmitButton({selectedFile, setSelectedId}) {
             <button style={{display: "flex", flex_direction: "row"}}
                     className="logo" onClick={() => postFile(selectedFile, setSelectedId)}>
                 <h1 className="fg vert_center">
-                    Submit {count}
+                    Submit! 
                 </h1>
             </button>
         </>

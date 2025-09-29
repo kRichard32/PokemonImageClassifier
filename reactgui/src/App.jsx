@@ -10,6 +10,9 @@ function Header() {
     return (
       <>
           <div className="outline section_height" style={{height: "10vh"}}>
+            <h1 className="fg vert_center">
+              Basic Pokemon Image Classifier
+            </h1>
           </div>
           <div className="outline section_height" style={{height: "60vh"}}>
               <Middle setClassification={(event) => setClassification(event)}></Middle>
@@ -27,7 +30,7 @@ function Middle({setClassification}) {
             <div className="outline half_width" style={{width: `calc(70% - 2px)`}}>
                 <ImagePanel selectedFile={selectedFile}></ImagePanel>
             </div>
-            <div className="outline half_width" style={{width: `calc(30% - 2px)`}}>
+            <div className="outline half_width" style={{width: `calc(30% - 4px)`}}>
                 <RightPanel setClassification={setClassification} selectedFile={selectedFile}
                             setSelectedFile={setSelectedFile}></RightPanel>
             </div>
